@@ -16,6 +16,7 @@ model User {
 model Board {
   boardId Int @id @default(autoincrement())
   userId Int
+  boardName String
   boardString String
   createdAt DateTime @default(now())
 }

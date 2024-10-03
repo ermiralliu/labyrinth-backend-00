@@ -6,8 +6,7 @@ import { UserDtos } from "../Models/MyUser.js";
 
 // :/register
 
-const route = Router();
-//route.use( urlencoded({ extended : false }) );
+const route = Router();;
 route.use( json() );
 route.use( checkNotAuthenticated);  //this will probably work before every request, I think
 
