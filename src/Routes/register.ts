@@ -18,11 +18,19 @@ route.post('/', async (req: RegisterPostRequest, res: Response) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10); //10 is how many times that hash is hashed from what I understand
     const user = new UserDtos( req.body.username, hashedPassword);
     const success = await insertUser(user);
-    if (success)
+    if (success){
       console.log('successfully pushed:', user);
-    res.redirect('../login');
+      res.json({
+        message: 'user successfully added'
+      });
+    }
+    else
+      res.json({
+      message: 'user not added successfully'
+      }) 
+    
   } catch {
-    res.redirect('/');
+    res.json({message: 'problem'});
   }
 });
 
