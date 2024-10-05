@@ -1,3 +1,4 @@
+import { Board, BoardDtos } from "../Models/Board.js";
 import { MyUser, UserDtos } from "../Models/MyUser.js";
 import { PrismaClient } from "@prisma/client";
 
@@ -37,12 +38,8 @@ export async function disconnectDatabase() {
   await prisma.$disconnect();
 }
 
-export async function saveBoard(userId: number, boardName: string, boardString: string) {
-  const data = {
-    userId,
-    boardName,
-    boardString
-  };
+export async function saveBoard(boardDtos: BoardDtos) {
+  const data = boardDtos;
   try {
     const new_board = await prisma.board.create({
       data
@@ -56,24 +53,34 @@ export async function saveBoard(userId: number, boardName: string, boardString: 
   }
 }
 
-type Board = {userId: number, boardString: string, createdAt: Date, boardId: number }
-
 export async function getBoardsforUser(userId: number) {
   const boards: Board[] = await prisma.board.findMany({
     where: { userId }
-  })
+  });
   const toSend = boards.map(element => {
-    const { userId, boardString, ...result } = element;
-    return result;
+    const {boardId, boardName, createdAt} = element;
+    return {boardId, boardName, createdAt};
   });
   return toSend;
 }
 
-export async function getBoard(boardId: number, userId:number){
+export async function getBoard(boardId: number, userId: number){
   const board: Board | null = await prisma.board.findUnique({
     where: {boardId}
   });
   if(board?.userId === userId)
     return board;
   return null;
+}
+
+export async function updateBoard(userId: number, boardName:string, boardId: number, boardString: string, level: number, points: number){ //we always pass the userId as a guard
+  const board = await prisma.board.update({
+    where:{ userId, boardId },
+    data:{ boardName, boardString, level, points }
+  });
+  if(board!== null){
+    console.log('board Updated successfully');
+    return true;
+  }
+  return false;
 }

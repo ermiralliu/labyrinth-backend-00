@@ -18,6 +18,7 @@ import registerRoute from './Routes/register.js';
 import loginRoute from './Routes/login.js';
 import boardRoute from './Routes/board.js';
 import { MyUser } from './Models/MyUser.js';
+import { checkAuthenticated } from './Services/CheckAuthService.js';
 
 initializePassport(
   passport,
@@ -26,8 +27,6 @@ initializePassport(
 );
 
 const app = express();
-
-app.set('view-engine', 'ejs');
 
 app.use(flash());
 app.use(session({
@@ -49,8 +48,13 @@ app.use(cors({
 app.use('/register', registerRoute);
 app.use('/login', loginRoute(passport));
 app.use('/board', boardRoute);
-app.get('/', (req,res)=>{
-  res.json(req.user as MyUser); //we have removed the password in the serialization process, so this should be fine
+app.get('/', checkAuthenticated, (req,res)=>{
+  const {id, username} = req.user as MyUser;
+  res.json({id, username}); //we have removed the password in the serialization process, so this should be fine
+});
+app.delete('/logout', checkAuthenticated, (req, res)=>{
+  req.logOut(err => console.log(err));
+  res.json({message: 'logged out successfully'});
 });
 
 app.listen(3000, ()=> console.log('listening on port: 3000'));

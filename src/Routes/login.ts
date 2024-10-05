@@ -12,20 +12,19 @@ export default function loginRoute(passport: PassportStatic) {
     res.json(req.user ?? {message: 'is not defined, srry'});    //we won't need to pass any extra info to this
   });
 
-  route.post('/', checkNotAuthenticated, (req,res,next)=>{
+  route.post('/', (req,res,next)=>{
     console.log(req.body);
     res.header("Access-Control-Allow-Origin", 'http://localhost:5173');
     return next();
   }, passport.authenticate('local'), (req: Request, res: Response)=>{
     if(req.user)
-      res.send({
-        status: 200,
-        data: "login successful"
+      res.status(200).send({
+        message: "login successful"
       });
     else
-      res.send({
-        status: 404,
-        data: "login unsuccessful"});
+      res.status(404).send({
+        message: "login unsuccessful"
+      });
   });
   return route;
 }
