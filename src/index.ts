@@ -9,7 +9,6 @@ import initializePassport from './passport-config.js';  //written as .js cause y
 import passport from 'passport';
 import flash from 'express-flash';
 import session from 'express-session';
-import methodOverride from 'method-override';
 import cors from 'cors';
 
 import {findUserbyUsername, findUserById} from './Services/DatabaseService.js';
@@ -39,7 +38,6 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session()) //this makes the variables persist through the entire session the user is having
-app.use(methodOverride('_method'));
 app.use(cors({
   credentials: true,
   origin: 'http://localhost:5173' //you have to make a callback function if you want more than one possible origin
